@@ -3,12 +3,7 @@
   "mcp": {
     "econbiz": {
       "type": "local",
-      "command": [
-        "uvx",
-        "--from",
-        "git+ssh://git@github.com/mbravidor/econbiz-mcp",
-        "econbiz-mcp"
-      ],
+      "command": ["uvx", "--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
       "enabled": true,
       "environment": {
         "ECONBIZ_APP_NAME": "econbizmcp"

@@ -1,8 +1,32 @@
 # econbiz-mcp
 
-An [MCP](https://modelcontextprotocol.io) server for the [EconBiz API v1](https://api.econbiz.de/), the literature search of the ZBW – Leibniz Information Centre for Economics. It lets an AI assistant search economics and business literature, fetch full records, find similar works, check access options and autocomplete terms.
+An [MCP](https://modelcontextprotocol.io) server for the [EconBiz API v1](https://api.econbiz.de/). It lets an AI assistant search economics and business literature, fetch full records, find similar works, check access options and autocomplete terms. No API key is needed.
 
-No API key is needed. The API is in beta and has no quota, but it is not meant for bulk copying of EconBiz content (see its [terms of use](https://api.econbiz.de/)).
+## Table of contents
+
+- [About EconBiz](#about-econbiz)
+- [Tools](#tools)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Skill](#skill)
+- [Versions and updates](#versions-and-updates)
+- [Example prompts](#example-prompts)
+- [Development](#development)
+- [Testing status](#testing-status)
+- [Limitations](#limitations)
+- [Disclaimer and license](#disclaimer-and-license)
+
+## About EconBiz
+
+[EconBiz](https://www.econbiz.de/) is the literature search portal of the [ZBW – Leibniz Information Centre for Economics](https://www.zbw.eu/), the German National Library of Economics. It covers economics and business studies: books, journal articles, working papers, conference papers and grey literature.
+
+Why it is worth connecting to an assistant, measured against the live API in October 2026:
+
+- **Size:** about 10.4 million records, mostly from ECONIS (the ZBW library catalogue, 6.7M), RePEc (1.9M) and EconStor (0.3M, the ZBW open-access repository).
+- **German-language literature:** about 1.4 million records are tagged as German, including around 500,000 articles. That is a lower bound, because the language field is not always filled. German journals and monographs are often missing from international databases, which is the main reason to use EconBiz alongside them.
+- **Structure:** bilingual subject terms (STW Thesaurus), JEL codes, journal-level search and links to free full texts where they exist.
+
+I found no independent comparison with other databases, so this README does not claim that EconBiz has the best coverage, only that it is a strong source for German-language economics literature.
 
 ## Tools
 
@@ -54,65 +78,71 @@ API errors are returned with the API's own message, for example `EconBiz API err
 
 ## Installation
 
-Requires [uv](https://docs.astral.sh/uv/). No clone is needed: clients run the server straight from GitHub with `uvx`.
+Requires [uv](https://docs.astral.sh/uv/). There is nothing to clone: clients run the server straight from GitHub with `uvx`. Check that it starts:
 
 ```bash
-uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp
+uvx --from git+https://github.com/mbravidor/econbiz-mcp econbiz-mcp
 ```
 
-This prints nothing and waits for MCP messages on stdin; that means it started correctly. Stop it with Ctrl+C.
+This prints nothing and waits for MCP messages on stdin, which means it started correctly. Stop it with Ctrl+C.
 
-The repository is **private** and the configs use SSH (`git+ssh://`), so the machine needs an SSH key registered with your GitHub account and GitHub in `~/.ssh/known_hosts`. Test `ssh -T git@github.com`. If it fails with "Host key verification failed", add GitHub's published host keys (fetched over HTTPS from GitHub's API rather than trusted blindly): `gh api meta --jq '.ssh_keys[]' | sed 's/^/github.com /' >> ~/.ssh/known_hosts`. GUI clients start `uvx` without your shell, so also run the command above in a plain terminal first. If the repo is made public, the plain `git+https://github.com/mbravidor/econbiz-mcp` URL works without credentials.
+Then add it to your client. Ready-to-use files are in [`configs/`](configs); open your client below. Merge the `econbiz` entry into an existing config file instead of overwriting it.
 
-For development, clone the repo and run `uv sync`, then `uv run econbiz-mcp` (it waits for MCP messages on stdin; stop with Ctrl+C).
-
-## Configuration
-
-| Variable | Description |
-|---|---|
-| `ECONBIZ_APP_NAME` | Short alphanumeric application name, sent as User-Agent. The API terms encourage developers to identify their app. Default `econbizmcp`. |
-| `ECONBIZ_PROFILE` | Name of an EconBiz user profile (API `profile` parameter). Leave unset unless you have a registered profile: the API answers `400 Bad Request` to every call with an unknown profile name (tested with `default`, `econbiz`, `portal`). |
-
-## Client setup
-
-Ready-to-use files are in [`configs/`](configs). They run the server from GitHub via `uvx`, so they contain no local paths. To pin a version, append a git tag such as `@v0.2.0` to the URL (see [Versions and updates](#versions-and-updates)).
-
-| Client | File | Copy to / merge into |
-|---|---|---|
-| Claude Code | [`claude-code.json`](configs/claude-code.json) | `.mcp.json` in your project root (or use the command below) |
-| Claude Desktop | [`claude-desktop.json`](configs/claude-desktop.json) | Settings → Developer → *Edit Config*. macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`; Windows: `%APPDATA%\Claude\claude_desktop_config.json`. Claude Desktop is not officially available for Linux. |
-| opencode | [`opencode.json`](configs/opencode.json) | `opencode.json` in your project, or `~/.config/opencode/opencode.json` globally |
-| Zoo Code | [`zoo-code.json`](configs/zoo-code.json) | MCP icon → *Edit Global MCP* (`mcp_settings.json`) or *Edit Project MCP* (`.roo/mcp.json`) |
-| Roo Code | [`roo-code.json`](configs/roo-code.json) | Same as Zoo Code |
-| Cline | [`cline.json`](configs/cline.json) | MCP Servers → *Configure* → *Configure MCP Servers* (`cline_mcp_settings.json`; the Cline CLI uses `~/.cline/data/settings/cline_mcp_settings.json`) |
-| Cursor | [`cursor.json`](configs/cursor.json) | `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global) |
-| Windsurf | [`windsurf.json`](configs/windsurf.json) | *Open MCP config file* in the Cascade panel. Current docs name `~/.config/devin/mcp_config.json`; older Windsurf versions used `~/.codeium/windsurf/mcp_config.json` (not re-verified). |
-| Gemini CLI | [`gemini-cli.json`](configs/gemini-cli.json) | `mcpServers` key in `.gemini/settings.json` (project) or `~/.gemini/settings.json` (user). The folder must be trusted (`gemini trust`). |
-| VS Code (Copilot) | [`vscode.json`](configs/vscode.json) | `.vscode/mcp.json`, or *MCP: Open User Configuration*. VS Code also reads a root `.mcp.json` in the `mcpServers` format, so [`claude-code.json`](configs/claude-code.json) works there too. |
-
-If the target file already exists, merge the `econbiz` entry into the existing server object instead of overwriting the file.
-
-### Format differences between clients
-
-The server definition is the same everywhere (`uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp` plus the `ECONBIZ_APP_NAME` env variable). Only the wrapper differs:
-
-| Client | Top-level key | Command format | Env key | Auto-approve key | `type` |
-|---|---|---|---|---|---|
-| Claude Code, Claude Desktop, Windsurf, Gemini CLI | `mcpServers` | `command` + `args` | `env` | – (Gemini: `trust: true`) | optional (Claude Code writes `"stdio"`) |
-| Cursor | `mcpServers` | `command` + `args` | `env` | – | `"stdio"` (docs table marks it required) |
-| Roo Code, Zoo Code | `mcpServers` | `command` + `args` | `env` | `alwaysAllow` | optional, defaults to `stdio` |
-| Cline | `mcpServers` | `command` + `args` | `env` | `autoApprove` | not used for stdio |
-| VS Code | `servers` | `command` + `args` | `env` | – | `"stdio"` (required) |
-| opencode | `mcp` | `command` as one **array** (no `args`) | `environment` | – | `"local"` (required) |
-
-### Claude Code (CLI)
+### Claude Code
 
 ```bash
-claude mcp add econbiz --scope user \
-  -- uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp
+claude mcp add econbiz --scope user -- uvx --from git+https://github.com/mbravidor/econbiz-mcp econbiz-mcp
 ```
 
-### opencode
+`--scope user` makes it available in all projects. Add `-e ECONBIZ_APP_NAME=yourname` before the `--` to set the app name. Alternatively, put the JSON below in `.mcp.json` in your project root.
+
+<details>
+<summary>.mcp.json</summary>
+
+```json
+{
+  "mcpServers": {
+    "econbiz": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "env": {
+        "ECONBIZ_APP_NAME": "econbizmcp"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+### Other clients
+
+<details>
+<summary><b>Claude Desktop</b></summary>
+
+Settings → Developer → *Edit Config*. File: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows).
+
+```json
+{
+  "mcpServers": {
+    "econbiz": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "env": {
+        "ECONBIZ_APP_NAME": "econbizmcp"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>opencode</b></summary>
+
+File: `opencode.json` in your project or `~/.config/opencode/opencode.json`. opencode uses `mcp`, with the command as one array.
 
 ```json
 {
@@ -120,7 +150,7 @@ claude mcp add econbiz --scope user \
   "mcp": {
     "econbiz": {
       "type": "local",
-      "command": ["uvx", "--from", "git+ssh://git@github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "command": ["uvx", "--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
       "enabled": true,
       "environment": {
         "ECONBIZ_APP_NAME": "econbizmcp"
@@ -130,14 +160,19 @@ claude mcp add econbiz --scope user \
 }
 ```
 
-### Zoo Code / Roo Code (Cline: see note below)
+</details>
+
+<details>
+<summary><b>Zoo Code / Roo Code</b></summary>
+
+MCP icon → *Edit Global MCP* (`mcp_settings.json`) or *Edit Project MCP* (`.roo/mcp.json`). `alwaysAllow` skips the approval prompt; all tools are read-only. Remove it to confirm each call. [`roo-code.json`](configs/roo-code.json) is identical to [`zoo-code.json`](configs/zoo-code.json).
 
 ```json
 {
   "mcpServers": {
     "econbiz": {
       "command": "uvx",
-      "args": ["--from", "git+ssh://git@github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
       "env": {
         "ECONBIZ_APP_NAME": "econbizmcp"
       },
@@ -148,16 +183,43 @@ claude mcp add econbiz --scope user \
 }
 ```
 
-`alwaysAllow` skips the approval prompt for these tools. **Cline names this key `autoApprove`**, so use [`cline.json`](configs/cline.json) for it. All tools are read-only, but remove the entry if you prefer to confirm each call.
+</details>
 
-### Generic `mcpServers` clients (Claude Desktop, Cursor, Windsurf, Gemini CLI)
+<details>
+<summary><b>Cline</b></summary>
+
+MCP Servers → *Configure* → *Configure MCP Servers* (`cline_mcp_settings.json`). The Cline CLI uses `~/.cline/data/settings/cline_mcp_settings.json`. Cline calls the approval list `autoApprove`.
 
 ```json
 {
   "mcpServers": {
     "econbiz": {
       "command": "uvx",
-      "args": ["--from", "git+ssh://git@github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "env": {
+        "ECONBIZ_APP_NAME": "econbizmcp"
+      },
+      "disabled": false,
+      "autoApprove": ["search", "get_record", "get_availability", "find_similar", "suggest", "list_fields"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Cursor</b></summary>
+
+File: `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global).
+
+```json
+{
+  "mcpServers": {
+    "econbiz": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
       "env": {
         "ECONBIZ_APP_NAME": "econbizmcp"
       }
@@ -166,9 +228,81 @@ claude mcp add econbiz --scope user \
 }
 ```
 
-`claude mcp add` (`--scope user` makes it available in all projects) stores the entry with `"type": "stdio"` and without `ECONBIZ_APP_NAME`. Add `-e ECONBIZ_APP_NAME=...` if you want it.
+</details>
 
-GUI clients often do not inherit your shell `PATH`. If `uv` is not found, replace `"uvx"` with its absolute path (`which uvx`).
+<details>
+<summary><b>Windsurf</b></summary>
+
+*Open MCP config file* in the Cascade panel. Current docs name `~/.config/devin/mcp_config.json`; older versions used `~/.codeium/windsurf/mcp_config.json` (not re-verified).
+
+```json
+{
+  "mcpServers": {
+    "econbiz": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "env": {
+        "ECONBIZ_APP_NAME": "econbizmcp"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Gemini CLI</b></summary>
+
+Put the `mcpServers` key in `.gemini/settings.json` (project) or `~/.gemini/settings.json` (user). The folder must be trusted (`gemini trust`).
+
+```json
+{
+  "mcpServers": {
+    "econbiz": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "env": {
+        "ECONBIZ_APP_NAME": "econbizmcp"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>VS Code (Copilot)</b></summary>
+
+File: `.vscode/mcp.json`, or *MCP: Open User Configuration*. VS Code uses `servers`, not `mcpServers`.
+
+```json
+{
+  "servers": {
+    "econbiz": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "env": {
+        "ECONBIZ_APP_NAME": "econbizmcp"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+
+GUI clients often do not inherit your shell `PATH`. If `uvx` is not found, put its absolute path (`which uvx`) in `command`.
+
+## Configuration
+
+| Variable | Description |
+|---|---|
+| `ECONBIZ_APP_NAME` | Short alphanumeric application name, sent as User-Agent. The API terms encourage developers to identify their app. Default `econbizmcp`. |
+| `ECONBIZ_PROFILE` | Name of an EconBiz user profile (API `profile` parameter). Leave unset unless you have a registered profile: the API answers `400 Bad Request` to every call with an unknown profile name (tested with `default`, `econbiz`, `portal`). |
 
 ## Skill
 
@@ -186,13 +320,13 @@ Other tools use other directories; check their docs. Re-copy after updating the 
 Releases are git tags (`v0.1.0`, `v0.1.1`, `v0.2.0`, ...; see [`CHANGELOG.md`](CHANGELOG.md)).
 
 - **Unpinned** (`...econbiz-mcp` as in the configs) follows `main`.
-- **Pinned**: append the tag, e.g. `git+ssh://git@github.com/mbravidor/econbiz-mcp@v0.2.0`. For Claude Code:
+- **Pinned**: append the tag, e.g. `git+https://github.com/mbravidor/econbiz-mcp@v0.2.0`. For Claude Code:
 
   ```bash
   claude mcp remove econbiz -s user
-  claude mcp add econbiz --scope user -- uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp@v0.2.0 econbiz-mcp
+  claude mcp add econbiz --scope user -- uvx --from git+https://github.com/mbravidor/econbiz-mcp@v0.2.0 econbiz-mcp
   ```
-- **Updating**: `uvx` caches the checkout, so an unpinned install can keep serving old code. Run once with `--refresh` to pull the latest: `uvx --refresh --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp` (stop it with Ctrl+C), then restart your client.
+- **Updating**: `uvx` caches the checkout, so an unpinned install can keep serving old code. Run once with `--refresh` to pull the latest: `uvx --refresh --from git+https://github.com/mbravidor/econbiz-mcp econbiz-mcp` (stop it with Ctrl+C), then restart your client.
 
 ## Example prompts
 
@@ -226,3 +360,9 @@ The server was tested against the live API through a real MCP stdio session, and
 - Facet filters accept single values only (`date:2007`); ranges like `date:[2000 TO 2010]` return HTTP 400 there. Range queries work inside `query` (`nonaka AND date:[2000 TO 2010]`).
 - `fulltext` widens the search to full texts; it does not restrict results to records with full text.
 - `creator` may list only the first author of a multi-author record; use `title_responsible` from `get_record` for the full statement.
+
+## Disclaimer and license
+
+This is an unofficial community project. It is not affiliated with or endorsed by the ZBW. Data comes from the EconBiz API and is subject to its [terms of use](https://api.econbiz.de/): the service is in beta, offers no guaranteed availability, and is not meant for copying EconBiz content at scale.
+
+MIT License, see [`LICENSE`](LICENSE).

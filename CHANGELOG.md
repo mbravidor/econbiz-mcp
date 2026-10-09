@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- Repository made public; configs and docs use the `git+https` URL (no SSH key needed).
+- README restructured: table of contents, About EconBiz, per-client collapsible install snippets, disclaimer.
+
 ## 0.2.0
 - Added the optional `skills/econbiz-research` agent skill (query syntax, recall pitfalls).
 - Tool docstrings now cover wildcards, date ranges in queries, language codes, `fulltext` semantics and the first-author-only `creator` field.
