@@ -60,6 +60,8 @@ Requires [uv](https://docs.astral.sh/uv/). No clone is needed: clients run the s
 uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp
 ```
 
+This prints nothing and waits for MCP messages on stdin; that means it started correctly. Stop it with Ctrl+C.
+
 The repository is **private** and the configs use SSH (`git+ssh://`), so the machine needs an SSH key registered with your GitHub account and GitHub in `~/.ssh/known_hosts`. Test `ssh -T git@github.com`. GUI clients start `uvx` without your shell, so also run the command above in a plain terminal first. If the repo is made public, the plain `git+https://github.com/mbravidor/econbiz-mcp` URL works without credentials.
 
 For development, clone the repo and run `uv sync`, then `uv run econbiz-mcp` (it waits for MCP messages on stdin; stop with Ctrl+C).

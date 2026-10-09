@@ -179,7 +179,10 @@ async def suggest(
 
 
 def main() -> None:
-    mcp.run()
+    try:
+        mcp.run()
+    except KeyboardInterrupt:
+        pass  # Ctrl+C in a terminal is a normal way to stop a stdio server
 
 
 if __name__ == "__main__":
