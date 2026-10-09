@@ -23,6 +23,15 @@ MCP server for the EconBiz API v1 (https://api.econbiz.de/). Python, single file
 - `configs/*.json` differ per client on purpose (see the "Format differences" table in the README): opencode uses `mcp` + a `command` array + `environment`; VS Code uses `servers`; Cline uses `autoApprove`; Roo/Zoo use `alwaysAllow`. Do not "normalize" them.
 - All configs run the server via `uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp`. The repo is private, so SSH access to GitHub is required.
 
+## Releasing
+
+1. Update `CHANGELOG.md` and bump `version` in `pyproject.toml`.
+2. Run `uv lock` so `uv.lock` records the new version.
+3. Commit, `git push`, then `git tag -a vX.Y.Z -m "..."` and `git push origin vX.Y.Z`.
+4. Check the pinned install: `uvx --refresh --from git+ssh://git@github.com/mbravidor/econbiz-mcp@vX.Y.Z econbiz-mcp`.
+
+Ask before pushing or tagging: the repo is private but the tags are what users pin to.
+
 ## Git
 
 - Remote: `git@github.com:mbravidor/econbiz-mcp.git`, branch `main`. Commit identity is set repo-locally.

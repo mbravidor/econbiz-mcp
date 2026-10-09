@@ -75,7 +75,7 @@ For development, clone the repo and run `uv sync`, then `uv run econbiz-mcp` (it
 
 ## Client setup
 
-Ready-to-use files are in [`configs/`](configs). They run the server from GitHub via `uvx`, so they contain no local paths. To pin a version, append `@v0.1.0` (a git tag) to the URL.
+Ready-to-use files are in [`configs/`](configs). They run the server from GitHub via `uvx`, so they contain no local paths. To pin a version, append a git tag such as `@v0.1.1` to the URL (see [Versions and updates](#versions-and-updates)).
 
 | Client | File | Copy to / merge into |
 |---|---|---|
@@ -169,6 +169,19 @@ claude mcp add econbiz --scope user \
 `claude mcp add` (`--scope user` makes it available in all projects) stores the entry with `"type": "stdio"` and without `ECONBIZ_APP_NAME`. Add `-e ECONBIZ_APP_NAME=...` if you want it.
 
 GUI clients often do not inherit your shell `PATH`. If `uv` is not found, replace `"uvx"` with its absolute path (`which uvx`).
+
+## Versions and updates
+
+Releases are git tags (`v0.1.0`, `v0.1.1`, ...; see [`CHANGELOG.md`](CHANGELOG.md)).
+
+- **Unpinned** (`...econbiz-mcp` as in the configs) follows `main`.
+- **Pinned**: append the tag, e.g. `git+ssh://git@github.com/mbravidor/econbiz-mcp@v0.1.1`. For Claude Code:
+
+  ```bash
+  claude mcp remove econbiz -s user
+  claude mcp add econbiz --scope user -- uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp@v0.1.1 econbiz-mcp
+  ```
+- **Updating**: `uvx` caches the checkout, so an unpinned install can keep serving old code. Run once with `--refresh` to pull the latest: `uvx --refresh --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp` (stop it with Ctrl+C), then restart your client.
 
 ## Example prompts
 
