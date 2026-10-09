@@ -19,9 +19,9 @@ No API key is needed. The API is in beta and has no quota, but it is not meant f
 
 | Parameter | Description |
 |---|---|
-| `query` | Lucene syntax. `AND` is the default operator. Supports `AND`/`OR`/`NOT`, `"phrases"`, fielded search (`title:"knowledge management"`) and `(grouping)`. Special characters must be Lucene-escaped. |
+| `query` | Lucene syntax. `AND` is the default operator. Supports `AND`/`OR`/`NOT`, `"phrases"`, fielded search (`title:"knowledge management"`), `(grouping)`, wildcards (`title:Leasing*`) and year ranges (`date:[2020 TO 2026]`). Special characters must be Lucene-escaped. |
 | `size` / `start` | Page size (API default 10) and 1-based position of the first hit |
-| `fulltext` | Also search full texts (only partly available) |
+| `fulltext` | Additionally search full texts (only partly available); widens the result set, does not restrict it |
 | `facets` | Fields to count, e.g. `["date", "person", "subject"]` |
 | `facet_size` | Max items per facet (API default 40) |
 | `filters` | Facet filters as `field:value`, e.g. `["date:2007", "person:\"Nonaka, Ikujiro\""]` |

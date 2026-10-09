@@ -11,7 +11,7 @@ Use the `econbiz` MCP tools. Do not scrape `www.econbiz.de` (bot-protected); lin
 
 1. Translate the topic into German and English terms. Subjects are bilingual, titles are usually monolingual. Find controlled terms with `suggest(prefix, field="subject")`.
 2. Run several tight queries with `search`, not one broad one. Use `facets=["date","language","type"]` to see how the hits distribute.
-3. Verify every item you will cite with `get_record` and take bibliographic data from there, never from memory.
+3. Take bibliographic data from the index, never from memory. The search hit is enough when it shows volume, issue and pages; otherwise verify the item with `get_record` before citing it (see Authors and duplicates).
 4. Report which queries you ran so coverage can be judged.
 
 ## Query syntax
@@ -37,11 +37,11 @@ Use the `econbiz` MCP tools. Do not scrape `www.econbiz.de` (bot-protected); lin
 
 - `creator` can list only the first author. For the full list use `title_responsible` from `get_record`, and cross-check `person` and `contributor`. Do not build citation metadata from `creator` alone.
 - **Before citing, run `get_record`** on every item whose list-view data lacks volume, issue or pages. The search hit usually shows volume, issue and pages in `isPartOf`, but not always (some records carry only the bare journal title, e.g. "PiR"), and it never has the ISSN or ZDB-ID; it also omits `language`. `get_record` has the full journal statement, `language` and `title_responsible`. The `language` field can disagree with the title (a German-titled KoR article is indexed as `eng`), so check it when language matters.
-- **When the user restricts the language** (e.g. German-language sources only), run the same query once more with `AND language:eng` and read the few hits: it lists records indexed as English, which includes German-titled items that are mislabeled. Keep or drop each one deliberately, and say which you did. This is cheaper than calling `get_record` on every candidate.
+- **When the user restricts the language** (e.g. German-language sources only), run the unrestricted topic query once more with `AND language:eng` appended (not the narrowed query with signal words) and read the few hits: it lists records indexed as English, which includes German-titled items that are mislabeled. Keep or drop each one deliberately, and say which you did. This is cheaper than calling `get_record` on every candidate.
 - Names in case-study titles can be company names, not authors.
 - The index contains duplicates (often title-casing variants). Deduplicate by DOI when present (`identifier_number`, formatted `10.x/y [DOI]`), otherwise by normalized title and year. Print and e-book records of the same book are separate records (the e-book carries the DOI), so match books by title, author and year. Two records can share a DOI yet list different first authors (one may be an EconStor record that carries the free PDF; prefer that one for open access), so do not dedupe by creator.
 - Citation counts (`citations`) are sparsely populated. Do not treat them as reliable.
 
 ## Limits
 
-No quota, but bulk copying is against the terms of use. Keep `size` at 100 or below per page and do not crawl.
+No quota, but bulk copying is against the terms of use. Keep `size` at 100 or below per page (30 to 50 in practice, see pitfall 4) and do not crawl.
