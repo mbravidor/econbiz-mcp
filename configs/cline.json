@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "econbiz": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/mbravidor/econbiz-mcp",
+        "econbiz-mcp"
+      ],
+      "env": {
+        "ECONBIZ_APP_NAME": "econbizmcp"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "search",
+        "get_record",
+        "get_availability",
+        "find_similar",
+        "suggest",
+        "list_fields"
+      ]
+    }
+  }
+}

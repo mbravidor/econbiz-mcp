@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "econbiz": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/mbravidor/econbiz-mcp",
+        "econbiz-mcp"
+      ],
+      "env": {
+        "ECONBIZ_APP_NAME": "econbizmcp"
+      }
+    }
+  }
+}
