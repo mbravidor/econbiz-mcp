@@ -62,7 +62,7 @@ uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp
 
 This prints nothing and waits for MCP messages on stdin; that means it started correctly. Stop it with Ctrl+C.
 
-The repository is **private** and the configs use SSH (`git+ssh://`), so the machine needs an SSH key registered with your GitHub account and GitHub in `~/.ssh/known_hosts`. Test `ssh -T git@github.com`. GUI clients start `uvx` without your shell, so also run the command above in a plain terminal first. If the repo is made public, the plain `git+https://github.com/mbravidor/econbiz-mcp` URL works without credentials.
+The repository is **private** and the configs use SSH (`git+ssh://`), so the machine needs an SSH key registered with your GitHub account and GitHub in `~/.ssh/known_hosts`. Test `ssh -T git@github.com`. If it fails with "Host key verification failed", add GitHub's published host keys (fetched over HTTPS from GitHub's API rather than trusted blindly): `gh api meta --jq '.ssh_keys[]' | sed 's/^/github.com /' >> ~/.ssh/known_hosts`. GUI clients start `uvx` without your shell, so also run the command above in a plain terminal first. If the repo is made public, the plain `git+https://github.com/mbravidor/econbiz-mcp` URL works without credentials.
 
 For development, clone the repo and run `uv sync`, then `uv run econbiz-mcp` (it waits for MCP messages on stdin; stop with Ctrl+C).
 
@@ -200,6 +200,10 @@ uv run python -c "import asyncio; from econbiz_mcp import server as s; print(asy
 ```
 
 The server is a single file, `src/econbiz_mcp/server.py`, built on the official MCP Python SDK (`FastMCP`, pinned to `mcp<2`) and `httpx`.
+
+## Testing status
+
+The server was tested against the live API through a real MCP stdio session, and the install from GitHub was verified with `uvx`. Of the client configs, only Claude Code was actually run (it reports *Connected*). The others follow each client's documentation but were not run in the clients themselves, so report any that need adjusting.
 
 ## Limitations
 

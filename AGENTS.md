@@ -11,7 +11,6 @@ MCP server for the EconBiz API v1 (https://api.econbiz.de/). Python, single file
 ## Gotchas
 
 - Keep the dependency pinned to `mcp<2`: v2 renamed `FastMCP` to `MCPServer` and moved the import.
-- On the author's Dropbox checkout `uv` cannot create `.venv` (no symlink support). Use `export UV_PROJECT_ENVIRONMENT=$HOME/.cache/econbiz-mcp-venv` there, or work from a normal clone.
 - Do not set `ECONBIZ_PROFILE` when testing: the API returns 400 for every unknown profile name, and no valid name is known.
 - Record IDs are numeric digits only; `_record_path` rejects anything else (`..` would otherwise rewrite the URL).
 - API quirks: facet filters take single values only (`date:2007`, ranges give 400); an unknown fielded-search field silently returns 0 hits; `size=0` is a valid count-only query. The API is beta, so be gentle (no bulk harvesting).
