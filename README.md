@@ -170,6 +170,10 @@ claude mcp add econbiz --scope user \
 
 GUI clients often do not inherit your shell `PATH`. If `uv` is not found, replace `"uvx"` with its absolute path (`which uvx`).
 
+## Skill
+
+[`skills/econbiz/SKILL.md`](skills/econbiz/SKILL.md) is an optional agent skill that teaches a model how to search EconBiz well: the query syntax and the recall pitfalls (German compound words, incomplete subject indexing, first-author-only `creator`, and so on). It expects the MCP tools above. Install it by copying or symlinking the `skills/econbiz` folder into your skills directory, e.g. `~/.claude/skills/econbiz` for Claude Code.
+
 ## Versions and updates
 
 Releases are git tags (`v0.1.0`, `v0.1.1`, ...; see [`CHANGELOG.md`](CHANGELOG.md)).
@@ -212,4 +216,6 @@ The server was tested against the live API through a real MCP stdio session, and
 - Full-text search covers only part of the corpus.
 - Record IDs must be numeric; anything else is rejected before a request is made.
 - A fielded query on a field that does not exist (e.g. `bogus:x`) silently returns 0 hits instead of an error. Check field names with `list_fields`.
-- Facet filters accept single values only (`date:2007`); ranges like `date:[2000 TO 2010]` return HTTP 400.
+- Facet filters accept single values only (`date:2007`); ranges like `date:[2000 TO 2010]` return HTTP 400 there. Range queries work inside `query` (`nonaka AND date:[2000 TO 2010]`).
+- `fulltext` widens the search to full texts; it does not restrict results to records with full text.
+- `creator` may list only the first author of a multi-author record; use `title_responsible` from `get_record` for the full statement.

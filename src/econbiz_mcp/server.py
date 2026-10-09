@@ -93,21 +93,29 @@ async def search(
     """Search the EconBiz literature index (economics and business studies).
 
     query: Lucene syntax; AND is the default operator. Supports AND/OR/NOT, "phrases",
-      fielded search (title:"knowledge management", creator:nonaka) and (grouping).
-      Special characters must be Lucene-escaped.
+      fielded search (title:"knowledge management", creator:nonaka), (grouping),
+      wildcards (title:Leasing*) and year ranges (date:[2020 TO 2026]).
+      Special characters must be Lucene-escaped. Tips: German compounds are single
+      tokens, so use wildcards (Leasing* finds Leasingverhältnisse); language codes are
+      ISO 639-2/B (language:deu, not ger); unknown fields silently return 0 hits;
+      subject indexing is incomplete, so don't use subject: as a hard filter.
     size: max records returned (API default 10).
     start: 1-based position of the first record (for paging).
-    fulltext: also search full texts (only partially available).
+    fulltext: additionally search full texts (only partly available). This widens the
+      result set; it does not restrict to records that have full text.
     facets: fields to compute facet counts for, e.g. ["date", "person", "subject"]
       (see list_fields with scope=facet).
     facet_size: max items per facet (API default 40).
     filters: facet value filters as 'field:value', e.g. ['date:2007', 'person:"Nonaka, Ikujiro"'].
+      Single values only; for year ranges put date:[2020 TO 2026] in the query instead.
       Quote values containing blanks, commas or special characters.
     sort: e.g. 'date desc' (default is relevance 'score desc'); see list_fields scope=sort.
     spellcheck: return a corrected-query suggestion with hit count.
     echo: echo the parsed query and facet values in the response.
 
     Returns a list-view subset of metadata per hit; use get_record for full details.
+    Note: 'creator' may list only the first author; get_record's 'title_responsible'
+    has the full author statement.
     """
     return await _get("search", {
         "q": query, "size": size, "from": start, "fulltext": fulltext if fulltext else None,

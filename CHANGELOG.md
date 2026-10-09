@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0
+- Added the optional `skills/econbiz` agent skill (query syntax, recall pitfalls).
+- Tool docstrings now cover wildcards, date ranges in queries, language codes, `fulltext` semantics and the first-author-only `creator` field.
+- README: documented the same behaviors.
+
 ## 0.1.1
 - Exit cleanly (code 0, no traceback) on Ctrl+C.
 - README: note that the server starts silently and waits on stdin.
