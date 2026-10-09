@@ -177,6 +177,8 @@ GUI clients often do not inherit your shell `PATH`. If `uv` is not found, replac
 
 ## Development
 
+Agents and contributors: see [`AGENTS.md`](AGENTS.md) for gotchas and the doc/config sync rules.
+
 ```bash
 uv sync
 uv run python -c "import asyncio; from econbiz_mcp import server as s; print(asyncio.run(s.search('inflation', size=1)))"
