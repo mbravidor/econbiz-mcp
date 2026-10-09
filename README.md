@@ -57,10 +57,10 @@ API errors are returned with the API's own message, for example `EconBiz API err
 Requires [uv](https://docs.astral.sh/uv/). No clone is needed: clients run the server straight from GitHub with `uvx`.
 
 ```bash
-uvx --from git+https://github.com/mbravidor/econbiz-mcp econbiz-mcp
+uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp
 ```
 
-The repository is **private**, so `git` must be able to authenticate to GitHub on every machine that runs this. Easiest is the GitHub CLI: `gh auth login`, then `gh auth setup-git` (HTTPS credential helper). With SSH keys instead, replace the URL in the configs with `git+ssh://git@github.com/mbravidor/econbiz-mcp`. GUI clients start `uvx` without your shell, so test the command above in a plain terminal first.
+The repository is **private** and the configs use SSH (`git+ssh://`), so the machine needs an SSH key registered with your GitHub account and GitHub in `~/.ssh/known_hosts`. Test `ssh -T git@github.com`. GUI clients start `uvx` without your shell, so also run the command above in a plain terminal first. If the repo is made public, the plain `git+https://github.com/mbravidor/econbiz-mcp` URL works without credentials.
 
 For development, clone the repo and run `uv sync`, then `uv run econbiz-mcp` (it waits for MCP messages on stdin; stop with Ctrl+C).
 
@@ -92,7 +92,7 @@ If the target file already exists, merge the `econbiz` entry into the existing s
 
 ### Format differences between clients
 
-The server definition is the same everywhere (`uvx --from git+https://github.com/mbravidor/econbiz-mcp econbiz-mcp` plus the `ECONBIZ_APP_NAME` env variable). Only the wrapper differs:
+The server definition is the same everywhere (`uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp` plus the `ECONBIZ_APP_NAME` env variable). Only the wrapper differs:
 
 | Client | Top-level key | Command format | Env key | Auto-approve key | `type` |
 |---|---|---|---|---|---|
@@ -107,7 +107,7 @@ The server definition is the same everywhere (`uvx --from git+https://github.com
 
 ```bash
 claude mcp add econbiz --scope user \
-  -- uvx --from git+https://github.com/mbravidor/econbiz-mcp econbiz-mcp
+  -- uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp econbiz-mcp
 ```
 
 ### opencode
@@ -118,7 +118,7 @@ claude mcp add econbiz --scope user \
   "mcp": {
     "econbiz": {
       "type": "local",
-      "command": ["uvx", "--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "command": ["uvx", "--from", "git+ssh://git@github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
       "enabled": true,
       "environment": {
         "ECONBIZ_APP_NAME": "econbizmcp"
@@ -135,7 +135,7 @@ claude mcp add econbiz --scope user \
   "mcpServers": {
     "econbiz": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "args": ["--from", "git+ssh://git@github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
       "env": {
         "ECONBIZ_APP_NAME": "econbizmcp"
       },
@@ -155,7 +155,7 @@ claude mcp add econbiz --scope user \
   "mcpServers": {
     "econbiz": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
+      "args": ["--from", "git+ssh://git@github.com/mbravidor/econbiz-mcp", "econbiz-mcp"],
       "env": {
         "ECONBIZ_APP_NAME": "econbizmcp"
       }

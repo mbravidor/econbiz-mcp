@@ -4,7 +4,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/mbravidor/econbiz-mcp",
+        "git+ssh://git@github.com/mbravidor/econbiz-mcp",
         "econbiz-mcp"
       ],
       "env": {
