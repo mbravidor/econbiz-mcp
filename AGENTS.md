@@ -20,7 +20,7 @@ MCP server for the EconBiz API v1 (https://api.econbiz.de/). Python, single file
 
 - Adding or changing a tool or parameter: update the tool docstring (it is what the LLM sees), the README tool tables, and the `alwaysAllow`/`autoApprove` lists in `configs/zoo-code.json`, `roo-code.json` and `cline.json`.
 - `configs/*.json` differ per client on purpose (see the "Format differences" table in the README): opencode uses `mcp` + a `command` array + `environment`; VS Code uses `servers`; Cline uses `autoApprove`; Roo/Zoo use `alwaysAllow`. Do not "normalize" them.
-- `skills/econbiz/SKILL.md` documents search behavior for agents. Update it when tool parameters or verified API quirks change.
+- `skills/econbiz-research/SKILL.md` documents search behavior for agents. Update it when tool parameters or verified API quirks change.
 - All configs run the server via `uvx --from git+ssh://git@github.com/mbravidor/econbiz-mcp`. The repo is private, so SSH access to GitHub is required.
 
 ## Releasing

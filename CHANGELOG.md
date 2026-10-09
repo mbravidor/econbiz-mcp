@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.2.0
-- Added the optional `skills/econbiz` agent skill (query syntax, recall pitfalls).
+- Added the optional `skills/econbiz-research` agent skill (query syntax, recall pitfalls).
 - Tool docstrings now cover wildcards, date ranges in queries, language codes, `fulltext` semantics and the first-author-only `creator` field.
 - README: documented the same behaviors.
 

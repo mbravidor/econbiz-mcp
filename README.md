@@ -172,7 +172,14 @@ GUI clients often do not inherit your shell `PATH`. If `uv` is not found, replac
 
 ## Skill
 
-[`skills/econbiz/SKILL.md`](skills/econbiz/SKILL.md) is an optional agent skill that teaches a model how to search EconBiz well: the query syntax and the recall pitfalls (German compound words, incomplete subject indexing, first-author-only `creator`, and so on). It expects the MCP tools above. Install it by copying or symlinking the `skills/econbiz` folder into your skills directory, e.g. `~/.claude/skills/econbiz` for Claude Code.
+[`skills/econbiz-research/SKILL.md`](skills/econbiz-research/SKILL.md) is an optional agent skill that teaches a model how to search EconBiz well: the query syntax and the recall pitfalls (German compound words, incomplete subject indexing, first-author-only `creator`, and so on). It expects the MCP tools above. Install it by copying the folder into your agent's skills directory:
+
+```bash
+cp -r skills/econbiz-research ~/.claude/skills/        # Claude Code (opencode also reads this directory)
+cp -r skills/econbiz-research ~/.config/opencode/skills/   # opencode only
+```
+
+Other tools use other directories; check their docs. Re-copy after updating the repo.
 
 ## Versions and updates
 

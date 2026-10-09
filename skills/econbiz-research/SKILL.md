@@ -1,5 +1,5 @@
 ---
-name: econbiz
+name: econbiz-research
 description: Search EconBiz (api.econbiz.de), the ZBW literature portal for economics and business studies, through the econbiz MCP tools (search, get_record, get_availability, find_similar, suggest, list_fields). Use for literature searches in economics, business, accounting, finance, tax or management, especially when German-language journals, monographs, textbooks or working papers matter. Covers EconBiz query syntax and the recall pitfalls that hide relevant records.
 ---
 
